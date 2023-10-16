@@ -44,3 +44,8 @@ button {
     display: inline;
     justify-content: center;
 }
+
+form{
+    justify-content: center;
+    display: flex;
+}

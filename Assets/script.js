@@ -1,6 +1,6 @@
 // Select timer elements
 var time = document.getElementById("right");
-var secondsLeft = 3;
+var secondsLeft = 60;
 var currentQuestionIndex = 0;
 var score = 0;
 timerInterval = 0;
@@ -31,7 +31,7 @@ function startQuiz() {
   setTime();
 
 // Hiding description and quiz button
-document.querySelector(".quiz-container").style.display = questionList;
+document.querySelector(".quiz-container").style.display = "none";
 document.querySelector("#start").style.display = "none";
 
 
@@ -49,9 +49,9 @@ var questionList = [
     correctAnswer: 2,
 },
 {
-  text: "Arrays in Javascript can be used to store ______.",
-  choices: ["1 - Numbers and strings", "2 - Other Arrays", "3 - Booleans", "4 - All of the above",],
-  correctAnswer: 3,
+    text: "Arrays in Javascript can be used to store ______.",
+    choices: ["1 - Numbers and strings", "2 - Other Arrays", "3 - Booleans", "4 - All of the above",],
+    correctAnswer: 3,
 },
 {
     text: "String values must be enclosed within ______ when being assigned to variables.",
@@ -67,8 +67,51 @@ var questionList = [
 
 }
 
-// Start displaying questions
-function displayQuestion(){
-  
+
+// Start quiz
+function createQuiz(){
+  for (let i = 0; i < 6; i++) {
+    var question = document.createElement('quiz')
+    // question.setAttribute(questionList)
+    quiz-container.appendChild(questionList)
+
+  }
+}
+createQuiz();
+
+
+  //Check answers, substract 10 every wron answer,  gameOver
+  function checkAnswer() {
+ 
+};
+
+// Show "Correct"
+function displayCorrect() {
+  var correct = createElement("h3", "id", "Correct", "Correct!")
+  appendChild(document.body, correct);
 }
 
+// Time substraction from the close if answer is incorrect, show "Wrong!"
+  function displayWrong() {
+    var wrong = createElement("h3", "id", "wrong", "Wrong!")
+    appendChild(document.body, wrong);
+    secondsLeft = -10;
+  }
+
+
+
+// Form with initials and my score
+var submitEl = document.querySelector("#submit");
+var nameInput = document.querySelector("#name");
+var emailInput = document.querySelector("#email");
+var submissionResponseEl = document.querySelector("#response");
+
+
+function showResponse(event) {
+  event.preventDefault();
+  console.log(event);
+  var response = "Thank you for taking the quiz, " + nameInput.value + "!";
+  submissionResponseEl.textContent = response;
+}
+  
+submitEl.addEventListener("click", showResponse);
