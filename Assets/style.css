@@ -27,7 +27,9 @@ button {
    flex-wrap: wrap;
 
    }
-
+.hide {
+    display: none;
+}
 .question1{
     text-align: center;
     text-decoration: none;
