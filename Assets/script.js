@@ -4,8 +4,9 @@ var secondsLeft = 60;
 var currentQuestionIndex = 0;
 var score = 0;
 timerInterval = 0;
-var currentQuestionIndex = 0;
 var choicesEl = document.querySelector("#choices");
+var correct = 0;
+var wrong = 0;
 
 //set timer
 function setTime() {
@@ -26,47 +27,32 @@ function setTime() {
 var questionList = [
   {
     text: "Commonly used data types do NOT include:",
-    choices: ["1 - Booleans", "2 - Alerts", "3 - Strings", "4 - Numbers"],
+    choices: ["Booleans", "Alerts", "Strings", "Numbers"],
     correctAnswer: "1 - Booleans",
   },
   {
     text: "The condition of an if/else statement is enclosed within ______.",
-    choices: [
-      "1 - Quotes",
-      "2 - Curly Brackets",
-      "3 - Parentheses",
-      "4 - Square Brackets",
-    ],
+    choices: ["Quotes", "Curly Brackets", "Parentheses", "Square Brackets"],
     correctAnswer: "Quotes",
   },
   {
     text: "Arrays in Javascript can be used to store ______.",
     choices: [
-      "1 - Numbers and strings",
-      "2 - Other Arrays",
-      "3 - Booleans",
-      "4 - All of the above",
+      "Numbers and strings",
+      "Other Arrays",
+      "Booleans",
+      "All of the above",
     ],
     correctAnswer: "Booleans",
   },
   {
     text: "String values must be enclosed within ______ when being assigned to variables.",
-    choices: [
-      "1 - Quotes",
-      "2 - Curly Brackets",
-      "3 - Commas",
-      "4 - Parentheses",
-    ],
+    choices: ["Quotes", "Curly Brackets", "Commas", "Parentheses"],
     correctAnswer: "Quotes",
   },
   {
     text: "A very useful tool used during development and debugging for printing content to the debugger is:",
-    choices: [
-      "1 - Javascript",
-      "2 - console.log",
-      "3 - Terminal/bash",
-      "4 - For loops",
-    ],
+    choices: ["Javascript", "console.log", "Terminal/bash", "For loops"],
     correctAnswer: "Javascript",
   },
 ];
@@ -77,8 +63,8 @@ var questionList = [
 // Start quiz
 function startQuiz() {
   // Hiding description and quiz button
-
   document.querySelector("#start-screen").setAttribute("class", "hide");
+  document.querySelector("#end-screen").setAttribute("class", "hide");
   document.querySelector("#quiz-screen").removeAttribute("class");
 
   getQuestion();
@@ -87,6 +73,7 @@ function startQuiz() {
   setTime();
 }
 
+// show questions in the quiz screen
 function getQuestion() {
   var currentQuestionObject = questionList[currentQuestionIndex];
   console.log(currentQuestionObject);
@@ -104,20 +91,34 @@ function getQuestion() {
   }
 }
 
-//Check answers, substract 10 every wron answer,  gameOver
+//Check answers, substract 10 every wrong answer, gameOver
 function checkAnswer(event) {
   var btnEl = event.target;
   if (btnEl.value !== questionList[currentQuestionIndex].correctAnswer) {
-    console.log("connected");
-    secondsLeft -= 15;
+    secondsLeft -= 10;
     currentQuestionIndex++;
     getQuestion();
-    // if currentQuestionIndex > questionList.length {end quiz}
-    // if secondsLeft === 0 {end quiz}
+    // if answered all questions, end game
+    if (currentQuestionIndex > questionList.length) {
+      showScore();
+    }
+    // if time gets to 0, end game
+    if (secondsLeft === 0) {
+      showScore();
+    }
     // display wrong!
+    if (btnEl.value !== questionList[currentQuestionIndex].correctAnswer) {
+      choicesEl.textContent = "Wrong!";
+      console.log("wrong");
+    }
+    currentQuestionIndex++;
+    getQuestion();
   } else {
     // display correct
-    console.log("connected");
+    if (btnEl.value === questionList[currentQuestionIndex].correctAnswer) {
+      choicesEl.textContent = "Correct!";
+      console.log("true");
+    }
     currentQuestionIndex++;
     getQuestion();
   }
@@ -126,31 +127,39 @@ function checkAnswer(event) {
 // Click event for starting quiz
 document.getElementById("start").addEventListener("click", startQuiz);
 
-// Show "Correct"
-function displayCorrect() {
-  var correct = createElement("h3", "id", "Correct", "Correct!");
-  appendChild(document.body, correct);
-}
+// Check answer on click
+choicesEl.onclick = checkAnswer;
 
-// Time substraction from the close if answer is incorrect, show "Wrong!"
-function displayWrong() {
-  var wrong = createElement("h3", "id", "wrong", "Wrong!");
-  appendChild(document.body, wrong);
-  secondsLeft = -10;
-}
-
-// Form with initials and my score
+// End game with initials and score
 var submitEl = document.querySelector("#submit");
-var nameInput = document.querySelector("#name");
-var emailInput = document.querySelector("#email");
-var submissionResponseEl = document.querySelector("#response");
+var initialsInput = document.querySelector("#initials");
+var submissionResponseEl = document.querySelector("#score");
 
-function showResponse(event) {
+function showScore(event) {
   event.preventDefault();
   console.log(event);
-  var response = "Thank you for taking the quiz, " + nameInput.value + "!";
+  var response = "Thank you for taking the quiz, " + initialsInput.value + "!";
   submissionResponseEl.textContent = response;
+
+  document.querySelector("#end-screen").removeAttribute("class");
 }
 
-submitEl.addEventListener("click", showResponse);
-choicesEl.onclick = checkAnswer;
+submitEl.addEventListener("click", showScore);
+
+// Updates score on screen and highscore to user storage
+function setScore() {
+  showScore.textContent = secondsLeft;
+  localStorage.setItem("secondsLeft", secondsLeft);
+}
+
+//go back button
+var resetButton = document.getElementById("reset-button");
+
+function goBack() {
+  // Resets timer
+  secondsLeft = 60;
+  // restrart
+  startQuiz();
+}
+// Attaches event listener to button
+resetButton.addEventListener("click", goBack);
