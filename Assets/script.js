@@ -75,8 +75,13 @@ function startQuiz() {
 
 // show questions in the quiz screen
 function getQuestion() {
+  console.log(currentQuestionIndex, "currentQuestionIndex");
+  console.log(
+    questionList[currentQuestionIndex],
+    "questionList[currentQuestionIndex]"
+  );
   var currentQuestionObject = questionList[currentQuestionIndex];
-  console.log(currentQuestionObject);
+  console.log(currentQuestionObject, "currentQuestionObject");
   var questionEl = document.querySelector("#question");
   questionEl.textContent = currentQuestionObject.text;
   choicesEl.innerHTML = "";
@@ -96,14 +101,15 @@ function checkAnswer(event) {
   var btnEl = event.target;
   if (btnEl.value !== questionList[currentQuestionIndex].correctAnswer) {
     secondsLeft -= 10;
-    currentQuestionIndex++;
-    getQuestion();
+
     // if answered all questions, end game
     if (currentQuestionIndex > questionList.length) {
+      console.log("showscore 1");
       showScore();
     }
     // if time gets to 0, end game
     if (secondsLeft === 0) {
+      console.log("showscore 2");
       showScore();
     }
     // display wrong!
@@ -111,6 +117,7 @@ function checkAnswer(event) {
       choicesEl.textContent = "Wrong!";
       console.log("wrong");
     }
+    console.log("call getQuestion");
     currentQuestionIndex++;
     getQuestion();
   } else {
