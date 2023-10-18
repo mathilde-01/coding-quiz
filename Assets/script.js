@@ -1,18 +1,23 @@
 // Select timer elements
 var time = document.getElementById("right");
-var secondsLeft = 60;
+var secondsLeft = 6;
 var currentQuestionIndex = 0;
 var score = 0;
 timerInterval = 0;
+// Answers, right or wrong
 var choicesEl = document.querySelector("#choices");
 var correct = 0;
 var wrong = 0;
+var alert = document.getElementById("alert");
+// End game with initials and score
+var submitEl = document.querySelector("#submit");
+var initialsInput = document.querySelector("#initials");
+var submissionResponseEl = document.querySelector("#score");
 
-//set timer
+// Set timer
 function setTime() {
   var timerInterval = setInterval(function () {
     secondsLeft--;
-
     time.textContent = "Time: " + secondsLeft;
     // let start = document.querySelector("#start");
 
@@ -28,7 +33,7 @@ var questionList = [
   {
     text: "Commonly used data types do NOT include:",
     choices: ["Booleans", "Alerts", "Strings", "Numbers"],
-    correctAnswer: "1 - Booleans",
+    correctAnswer: "Booleans",
   },
   {
     text: "The condition of an if/else statement is enclosed within ______.",
@@ -72,6 +77,8 @@ function startQuiz() {
   //timer
   setTime();
 }
+// Click event for starting quiz
+document.getElementById("start").addEventListener("click", startQuiz);
 
 // show questions in the quiz screen
 function getQuestion() {
@@ -96,59 +103,54 @@ function getQuestion() {
   }
 }
 
-//Check answers, substract 10 every wrong answer, gameOver
+//Check answers, substract 10 every wrong answer, alerts
 function checkAnswer(event) {
   var btnEl = event.target;
-  if (btnEl.value !== questionList[currentQuestionIndex].correctAnswer) {
-    secondsLeft -= 10;
-
-    // if answered all questions, end game
-    if (currentQuestionIndex > questionList.length) {
-      console.log("showscore 1");
-      showScore();
-    }
-    // if time gets to 0, end game
-    if (secondsLeft === 0) {
-      console.log("showscore 2");
-      showScore();
-    }
-    // display wrong!
-    if (btnEl.value !== questionList[currentQuestionIndex].correctAnswer) {
-      choicesEl.textContent = "Wrong!";
-      console.log("wrong");
-    }
-    console.log("call getQuestion");
+  // if value is correct or wrong
+  if (btnEl.value === questionList[currentQuestionIndex].correctAnswer) {
+    alert.innerText = "Correct";
+    console.log("Correct");
     currentQuestionIndex++;
     getQuestion();
-  } else {
-    // display correct
-    if (btnEl.value === questionList[currentQuestionIndex].correctAnswer) {
-      choicesEl.textContent = "Correct!";
-      console.log("true");
-    }
+  } else if (btnEl.value !== questionList[currentQuestionIndex].correctAnswer) {
+    alert.innerText = "Wrong";
+    console.log("Wrong");
+    secondsLeft -= 10;
     currentQuestionIndex++;
     getQuestion();
   }
 }
-
-// Click event for starting quiz
-document.getElementById("start").addEventListener("click", startQuiz);
-
 // Check answer on click
 choicesEl.onclick = checkAnswer;
 
-// End game with initials and score
-var submitEl = document.querySelector("#submit");
-var initialsInput = document.querySelector("#initials");
-var submissionResponseEl = document.querySelector("#score");
+// end game, time out
+function endgame() {
+  // if answered all questions, end game
+  if (currentQuestionIndex >= questionList.length - 1) {
+    console.log("showscore");
+    showScore();
+  }
+  // if time gets to 0, end game
+  else if (secondsLeft === 0) {
+    console.log("game over");
+    showScore();
+  }
+}
+endgame();
 
+// Show score, initials input
 function showScore(event) {
-  event.preventDefault();
+  // event.preventDefault();
   console.log(event);
-  var response = "Thank you for taking the quiz, " + initialsInput.value + "!";
-  submissionResponseEl.textContent = response;
-
+  document.querySelector("#quiz-screen").setAttribute("class", "hide");
   document.querySelector("#end-screen").removeAttribute("class");
+
+  documentCreateElement("input");
+  newField.setAttribute("initials", "text");
+
+  var response = "You're finail score is " + secondsLeft.valueOf + ".";
+  submissionResponseEl.textContent = response;
+  var inputEl = formfield.getAttribute("initials");
 }
 
 submitEl.addEventListener("click", showScore);
@@ -159,7 +161,7 @@ function setScore() {
   localStorage.setItem("secondsLeft", secondsLeft);
 }
 
-//go back button
+// Go back button
 var resetButton = document.getElementById("reset-button");
 
 function goBack() {
