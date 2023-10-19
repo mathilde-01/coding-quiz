@@ -10,9 +10,12 @@ var correct = 0;
 var wrong = 0;
 var alert = document.getElementById("alert");
 // End game with initials and score
-var submitEl = document.querySelector("#submit");
+var submitEl = document.querySelector("#end");
 var initialsInput = document.querySelector("#initials");
 var submissionResponseEl = document.querySelector("#score");
+// question array
+
+// var currentQuestionObject = questionList[currentQuestionIndex];
 
 // Set timer
 function setTime() {
@@ -21,9 +24,10 @@ function setTime() {
     time.textContent = "Time: " + secondsLeft;
     // let start = document.querySelector("#start");
 
-    if (secondsLeft === 0) {
+    if (secondsLeft <= 0) {
       clearInterval(timerInterval);
       document.getElementById("right").innerHTML = "Game over!";
+      endGame();
     }
   }, 1000);
 }
@@ -61,6 +65,7 @@ var questionList = [
     correctAnswer: "Javascript",
   },
 ];
+var currentQuestionObject = questionList[currentQuestionIndex];
 
 // Randomize questions
 // questionList.sort(() => 0.5 - Math.random());
@@ -80,85 +85,107 @@ function startQuiz() {
 // Click event for starting quiz
 document.getElementById("start").addEventListener("click", startQuiz);
 
-// show questions in the quiz screen
+// Get questions in the quiz screen
 function getQuestion() {
-  console.log(currentQuestionIndex, "currentQuestionIndex");
-  console.log(
-    questionList[currentQuestionIndex],
-    "questionList[currentQuestionIndex]"
-  );
-  var currentQuestionObject = questionList[currentQuestionIndex];
-  console.log(currentQuestionObject, "currentQuestionObject");
-  var questionEl = document.querySelector("#question");
-  questionEl.textContent = currentQuestionObject.text;
-  choicesEl.innerHTML = "";
+  if (currentQuestionIndex >= 0 && currentQuestionIndex < questionList.length) {
+    var currentQuestionObject = questionList[currentQuestionIndex];
+    if (currentQuestionObject && currentQuestionObject.text) {
+      var questionEl = document.querySelector("#question");
+      questionEl.textContent = currentQuestionObject.text;
+      choicesEl.innerHTML = "";
 
-  // loop through current question choices
-  for (var i = 0; i < currentQuestionObject.choices.length; i++) {
-    var choice = currentQuestionObject.choices[i];
-    var btn = document.createElement("button");
-    btn.setAttribute("value", choice);
-    btn.textContent = `${i + 1}.${choice}`;
-    choicesEl.appendChild(btn);
+      for (var i = 0; i < currentQuestionObject.choices.length; i++) {
+        var choice = currentQuestionObject.choices[i];
+        var btn = document.createElement("button");
+        btn.setAttribute("value", choice);
+        btn.textContent = `${i + 1}.${choice}`;
+        choicesEl.appendChild(btn);
+      }
+    } else {
+      endGame();
+    }
+  } else {
+    endGame();
   }
 }
 
 //Check answers, substract 10 every wrong answer, alerts
 function checkAnswer(event) {
   var btnEl = event.target;
-  // if value is correct or wrong
-  if (btnEl.value === questionList[currentQuestionIndex].correctAnswer) {
-    alert.innerText = "Correct";
-    console.log("Correct");
-    currentQuestionIndex++;
-    getQuestion();
-  } else if (btnEl.value !== questionList[currentQuestionIndex].correctAnswer) {
-    alert.innerText = "Wrong";
-    console.log("Wrong");
-    secondsLeft -= 10;
-    currentQuestionIndex++;
-    getQuestion();
+  if (currentQuestionIndex >= 0 && currentQuestionIndex < questionList.length) {
+    var currentQuestionObject = questionList[currentQuestionIndex];
+    if (currentQuestionObject && currentQuestionObject.correctAnswer) {
+      if (btnEl.value === currentQuestionObject.correctAnswer) {
+        alert.innerText = "Correct";
+        console.log("Correct");
+        currentQuestionIndex++;
+        getQuestion();
+      } else {
+        alert.innerText = "Wrong";
+        console.log("Wrong");
+        secondsLeft -= 10;
+        currentQuestionIndex++;
+        getQuestion();
+      }
+    } else {
+      console.error(
+        "Invalid question object or missing 'correctAnswer' property."
+      );
+    }
+  } else {
+    console.error("Invalid currentQuestionIndex or questionList.");
   }
 }
+
 // Check answer on click
 choicesEl.onclick = checkAnswer;
 
 // end game, time out
-function endgame() {
+function endGame() {
   // if answered all questions, end game
-  if (currentQuestionIndex >= questionList.length - 1) {
+  if ((currentQuestionIndex = questionList.length)) {
     console.log("showscore");
+    document.querySelector("#quiz-screen").setAttribute("class", "hide");
+    document.querySelector("#end-screen").removeAttribute("class");
     showScore();
   }
   // if time gets to 0, end game
   else if (secondsLeft === 0) {
     console.log("game over");
+    document.querySelector("#quiz-screen").setAttribute("class", "hide");
+    document.querySelector("#end-screen").removeAttribute("class");
     showScore();
   }
 }
-endgame();
 
 // Show score, initials input
 function showScore(event) {
   // event.preventDefault();
   console.log(event);
-  document.querySelector("#quiz-screen").setAttribute("class", "hide");
-  document.querySelector("#end-screen").removeAttribute("class");
-
-  documentCreateElement("input");
-  newField.setAttribute("initials", "text");
-
-  var response = "You're finail score is " + secondsLeft.valueOf + ".";
+  document.querySelector("#score").removeAttribute("class");
+  var response = "Your final score is " + secondsLeft + ".";
   submissionResponseEl.textContent = response;
-  var inputEl = formfield.getAttribute("initials");
-}
 
-submitEl.addEventListener("click", showScore);
+  submitEl.addEventListener("click", setScore);
+}
 
 // Updates score on screen and highscore to user storage
 function setScore() {
   showScore.textContent = secondsLeft;
+
   localStorage.setItem("secondsLeft", secondsLeft);
+  document.querySelector("#highscores").removeAttribute("class");
+  highScore();
+}
+
+// Highscore
+function highScore() {
+  var score = localStorage.getItem("secondsLeft");
+  if (score === null) {
+    score = 0;
+  } else {
+    score = parseInt(score);
+  }
 }
 
 // Go back button
@@ -166,9 +193,11 @@ var resetButton = document.getElementById("reset-button");
 
 function goBack() {
   // Resets timer
-  secondsLeft = 60;
-  // restrart
+  secondsLeft === 60;
+  document.querySelector("#score").setAttribute("class", "hide");
+  document.querySelector("#highscores").setAttribute("class", "hide");
   startQuiz();
 }
+
 // Attaches event listener to button
 resetButton.addEventListener("click", goBack);
