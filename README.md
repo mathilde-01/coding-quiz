@@ -1,9 +1,9 @@
 # Coding Quiz
 [Link to deployed application](https://mathilde-01.github.io/coding-quiz/)
-![Portfolio screenshot](./Assets/images/coding-quiz-img.png)
+![Portfolio screenshot](./Assets/images/site-img.png)
 
 ## Description
-This application
+This application enables the user to take a multiple-choice questions coding quiz.
 
 ## Installation
 Below are the required steps to follow for this week's challenge using a AS AN / I WANT / SO THAT format for the user story and in a WHEN / THEN format for the acceptance criteria.
