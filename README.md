@@ -1,7 +1,12 @@
 # Coding Quiz
+[Link to deployed application](https://mathilde-01.github.io/coding-quiz/)
+![Portfolio screenshot](./Assets/images/coding-quiz-img.png)
 
 ## Description
+This application
 
+## Installation
+Below are the required steps to follow for this week's challenge using a AS AN / I WANT / SO THAT format for the user story and in a WHEN / THEN format for the acceptance criteria.
 
 ## User Story
 AS A coding boot camp student  
@@ -22,3 +27,4 @@ WHEN the game is over
 THEN I can save my initials and my score  
 
 ## Credits
+[Bootcampspot.com](https://bootcampspot.instructure.com/courses/4347/assignments/62269?module_item_id=1081301)
