@@ -1,6 +1,6 @@
 // Select timer elements
 var time = document.getElementById("right");
-var secondsLeft = 6;
+var secondsLeft = 60;
 var currentQuestionIndex = 0;
 var score = 0;
 timerInterval = 0;
@@ -14,7 +14,9 @@ var submitEl = document.querySelector("#end");
 var initialsInput = document.querySelector("#initials");
 var submissionResponseEl = document.querySelector("#score");
 // question array
-
+var scores = [];
+var game_score = 0;
+var game_start = 0;
 // var currentQuestionObject = questionList[currentQuestionIndex];
 
 // Set timer
@@ -28,6 +30,11 @@ function setTime() {
       clearInterval(timerInterval);
       document.getElementById("right").innerHTML = "Game over!";
       endGame();
+    }
+
+    if (game_start === 1) {
+      clearInterval(timerInterval);
+      document.getElementById("right").innerHTML = "Game over!";
     }
   }, 1000);
 }
@@ -70,6 +77,12 @@ var currentQuestionObject = questionList[currentQuestionIndex];
 // Randomize questions
 // questionList.sort(() => 0.5 - Math.random());
 
+function startScreen() {
+  secondsLeft = 60;
+  game_start = 0;
+  document.querySelector("#start-screen").removeAttribute("class");
+}
+
 // Start quiz
 function startQuiz() {
   // Hiding description and quiz button
@@ -82,7 +95,7 @@ function startQuiz() {
   //timer
   setTime();
 }
-// Click event for starting quiz
+
 document.getElementById("start").addEventListener("click", startQuiz);
 
 // Get questions in the quiz screen
@@ -143,6 +156,7 @@ choicesEl.onclick = checkAnswer;
 // end game, time out
 function endGame() {
   // if answered all questions, end game
+
   if ((currentQuestionIndex = questionList.length)) {
     console.log("showscore");
     document.querySelector("#quiz-screen").setAttribute("class", "hide");
@@ -165,39 +179,47 @@ function showScore(event) {
   document.querySelector("#score").removeAttribute("class");
   var response = "Your final score is " + secondsLeft + ".";
   submissionResponseEl.textContent = response;
-
   submitEl.addEventListener("click", setScore);
+  game_start = 1;
 }
 
 // Updates score on screen and highscore to user storage
 function setScore() {
   showScore.textContent = secondsLeft;
-
-  localStorage.setItem("secondsLeft", secondsLeft);
+  var storedScores = {
+    score: secondsLeft,
+    user: initialsInput,
+  };
+  localStorage.setItem("storedScores", JSON.stringify(storedScores));
   document.querySelector("#highscores").removeAttribute("class");
-  highScore();
+  renderHighScore();
 }
 
-// Highscore
-function highScore() {
-  var score = localStorage.getItem("secondsLeft");
-  if (score === null) {
-    score = 0;
+// Render Highscores
+function renderHighScore() {
+  var storedScores = JSON.parse(localStorage.getItem("storedScores"));
+  if (storedScores === null) {
+    scores = [];
   } else {
-    score = parseInt(score);
+    scores = storedScores;
+  }
+  for (i = 0; i < storedScores.length; i++) {
+    console.log("your score");
   }
 }
 
 // Go back button
-var resetButton = document.getElementById("reset-button");
 
 function goBack() {
   // Resets timer
-  secondsLeft === 60;
-  document.querySelector("#score").setAttribute("class", "hide");
+  // secondsLeft === 60;
+  clearInterval(timerInterval);
+  document.querySelector("#end-screen").setAttribute("class", "hide");
   document.querySelector("#highscores").setAttribute("class", "hide");
-  startQuiz();
+  document.querySelector("#score").setAttribute("class", "hide");
+  startScreen();
 }
 
 // Attaches event listener to button
-resetButton.addEventListener("click", goBack);
+
+document.getElementById("reset-button").addEventListener("click", goBack);
